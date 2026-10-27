@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UnitPro - Konverter Satuan</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #eef3f8;
+  color: #17324d;
+}
+
+.app {
+  max-width: 480px;
+  margin: 25px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 8px 30px #17324d15;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.logo {
+  font-size: 40px;
+}
+
+h1 {
+  margin-bottom: 8px;
+  color: #087e8b;
+}
+
+p { color: #667085; }
+
+label {
+  display: block;
+  font-weight: bold;
+  margin: 16px 0 7px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  font-size: 16px;
+  background: white;
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  margin-top: 20px;
+  background: #087e8b;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover { background: #066570; }
+
+.result {
+  display: none;
+  margin-top: 20px;
+  padding: 18px;
+  background: #e4f7f2;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+
+.result strong {
+  display: block;
+  font-size: 25px;
+  color: #087e8b;
+  margin-top: 8px;
+}
+
+footer {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 12px;
+  color: #667085;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <header>
+    <div class="logo">🔄</div>
+    <h1>UnitPro</h1>
+    <p>Kalkulator Konversi Satuan</p>
+  </header>
+
+  <label for="category">Kategori satuan</label>
+  <select id="category">
+    <option value="length">Panjang</option>
+    <option value="mass">Massa</option>
+    <option value="volume">Volume</option>
+    <option value="time">Waktu</option>
+    <option value="speed">Kecepatan</option>
+    <option value="temperature">Suhu</option>
+  </select>
+
+  <label for="value">Nilai yang dikonversi</label>
+  <input id="value" type="number" step="any"
+         placeholder="Masukkan angka">
+
+  <label for="from">Dari satuan</label>
+  <select id="from"></select>
+
+  <label for="to">Ke satuan</label>
+  <select id="to"></select>
+
+  <button id="convert">Konversi Sekarang</button>
+
+  <div id="result" class="result" aria-live="polite">
+    Hasil konversi
+    <strong id="answer"></strong>
+    <span id="detail"></span>
+  </div>
+
+  <footer>UnitPro © 2026 | Konversi mudah setiap hari</footer>
+</div>
+
+<script>
+const units = {
+  length: {
+    km: 1000, m: 1, cm: 0.01,
+    mm: 0.001, inci: 0.0254,
+    kaki: 0.3048, mil: 1609.344
+  },
+  mass: {
+    ton: 1000, kg: 1, g: 0.001,
+    mg: 0.000001, pon: 0.45359237
+  },
+  volume: {
+    m3: 1000, L: 1, mL: 0.001,
+    cm3: 0.001, galon_AS: 3.785411784
+  },
+  time: {
+    hari: 86400, jam: 3600,
+    menit: 60, detik: 1
+  },
+  speed: {
+    "m/s": 1, "km/jam": 1 / 3.6,
+    "mil/jam": 0.44704
+  },
+  temperature: {
+    "°C": 1, "°F": 1, K: 1
+  }
+};
+
+const category = document.getElementById("category");
+const from = document.getElementById("from");
+const to = document.getElementById("to");
+const input = document.getElementById("value");
+const result = document.getElementById("result");
+const answer = document.getElementById("answer");
+const detail = document.getElementById("detail");
+
+function updateUnits() {
+  const list = Object.keys(units[category.value]);
+
+  from.replaceChildren();
+  to.replaceChildren();
+
+  list.forEach(unit => {
+    from.add(new Option(unit, unit));
+    to.add(new Option(unit, unit));
+  });
+
+  if (category.value === "length") to.value = "cm";
+  if (category.value === "mass") to.value = "g";
+  if (category.value === "volume") to.value = "mL";
+  if (category.value === "time") to.value = "menit";
+  if (category.value === "speed") to.value = "km/jam";
+  if (category.value === "temperature") to.value = "°F";
+
+  result.style.display = "none";
+}
+
+function convertTemperature(value, source, target) {
+  let celsius;
+
+  if (source === "°C") celsius = value;
+  if (source === "°F") celsius = (value - 32) * 5 / 9;
+  if (source === "K") celsius = value - 273.15;
+
+  if (target === "°C") return celsius;
+  if (target === "°F") return celsius * 9 / 5 + 32;
+  if (target === "K") return celsius + 273.15;
+}
+
+function convert() {
+  const value = Number(input.value);
+  const source = from.value;
+  const target = to.value;
+
+  if (input.value.trim() === "" || !Number.isFinite(value)) {
+    result.style.display = "block";
+    answer.textContent = "Input tidak valid";
+    detail.textContent = "Masukkan angka yang valid.";
+    return;
+  }
+
+  let output;
+
+  if (category.value === "temperature") {
+    output = convertTemperature(value, source, target);
+  } else {
+    const table = units[category.value];
+    output = value * table[source] / table[target];
+  }
+
+  if (!Number.isFinite(output)) {
+    result.style.display = "block";
+    answer.textContent = "Tidak dapat dihitung";
+    detail.textContent = "Periksa kembali input.";
+    return;
+  }
+
+  const formatted = Number(output.toPrecision(10)).toLocaleString(
+    "id-ID", { maximumFractionDigits: 10 }
+  );
+
+  result.style.display = "block";
+  answer.textContent = formatted + " " + target;
+  detail.textContent = value + " " + source +
+    " = " + formatted + " " + target;
+}
+
+category.addEventListener("change", updateUnits);
+document.getElementById("convert").addEventListener("click", convert);
+
+updateUnits();
+</script>
+</body>
+</html>
