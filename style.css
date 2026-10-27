@@ -1,0 +1,253 @@
+/* ==============================
+   UNITPRO - STYLE CSS
+   Kalkulator Konversi Satuan
+================================= */
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Variabel warna */
+:root {
+    --primary: #087e8b;
+    --primary-dark: #066570;
+    --secondary: #123c69;
+    --background: #eef3f8;
+    --white: #ffffff;
+    --text: #17324d;
+    --muted: #667085;
+    --border: #d5dee8;
+    --result-bg: #e4f7f2;
+    --shadow: 0 8px 30px rgba(23, 50, 77, 0.08);
+}
+
+/* Tampilan dasar */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+/* Kontainer utama */
+.app {
+    width: 100%;
+    max-width: 480px;
+    margin: 25px auto;
+    padding: 30px;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.logo {
+    width: 75px;
+    height: 75px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    background: #e5f7f4;
+    border-radius: 22px;
+}
+
+h1 {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.8px;
+    margin-bottom: 5px;
+}
+
+header p {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+/* Label formulir */
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 18px 0 7px;
+    color: var(--text);
+}
+
+/* Input dan pilihan satuan */
+input,
+select {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Efek fokus */
+input:focus,
+select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(8, 126, 139, 0.12);
+}
+
+/* Tombol konversi */
+button {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 24px;
+    padding: 13px 18px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        var(--secondary)
+    );
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 14px rgba(8, 126, 139, 0.18);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(8, 126, 139, 0.24);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:focus-visible {
+    outline: 3px solid rgba(8, 126, 139, 0.35);
+    outline-offset: 3px;
+}
+
+/* Area hasil konversi */
+.result {
+    display: none;
+    margin-top: 22px;
+    padding: 20px;
+    border: 1px solid #c7eee4;
+    border-radius: 13px;
+    background: var(--result-bg);
+    color: var(--text);
+    font-size: 14px;
+    overflow-wrap: anywhere;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Angka hasil */
+.result strong {
+    display: block;
+    margin: 8px 0;
+    color: var(--primary);
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+/* Animasi hasil */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Footer */
+footer {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid #edf0f4;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* Tampilan tablet */
+@media (max-width: 768px) {
+    body {
+        padding: 16px;
+    }
+
+    .app {
+        margin: 12px auto;
+        padding: 25px;
+    }
+}
+
+/* Tampilan HP */
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+    }
+
+    .app {
+        margin: 8px auto;
+        padding: 21px 17px;
+        border-radius: 16px;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    .logo {
+        width: 65px;
+        height: 65px;
+        font-size: 33px;
+        border-radius: 18px;
+    }
+
+    input,
+    select {
+        font-size: 16px;
+    }
+
+    .result strong {
+        font-size: 24px;
+    }
+}
+
+/* Mengurangi animasi jika diminta perangkat */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
